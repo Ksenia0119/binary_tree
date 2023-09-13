@@ -24,6 +24,7 @@ int main()
     //     1
     //   2             3
     // null null     4     5
+    // 
     //                  6
     // Создание узлов
 
@@ -33,42 +34,25 @@ int main()
     TreeNode<int>* node2 = new TreeNode<int>(2, node4, node5);
     TreeNode<int>* root = new TreeNode<int>(10, node2, node3);*/
     //// Установка связей между узлами
-    root->left = node2;
-    root->right = node3;
-    node3->left = node4;
-    node3->right = node5;
- 
-    //     10
-    //   2     37
-    // null null     7  8 
-    // 
-    // Просмотр содержимого узлов
-   /* PrintNode(root);*/
-   /* PrintNode(node2);
-    PrintNode(node3);
-    PrintNode(node4);
-    PrintNode(node5);*/
-
-   // GetTreeNode(12,node4,node5);
-    // Удаление всех узлов
-   // DeleteTree(root);
-   // PrintNode(node3);
-    //Inorder(root,PrintNode(data));
+    
     int leafCount = 0;
-
+    cout << "Обратный проход" << endl;
     Postorder(root);
    
     cout << endl;
+    cout << "Симметричный проход" << endl;
     Inorder(root);
     cout << endl;
+    cout << "Прямой проход" << endl;
     Preorder(root);
     cout << endl;
     CountLeaf(root, leafCount);
-    PrintTree(root, Depth(root));
+    PrintTree(root,0);
     cout << "Число листьев в дереве равно = " << leafCount << endl;
     cout << "Глубина дерева равна = " << Depth(root) << endl;
-
+    //DeleteTreeNode(node6);
+    //PrintTree(root, 0);
     //GetTreeNode(10,node6);
-    PrintTree(root, Depth(root));
+    //PrintTree(root, 0);
     return 0;
 }

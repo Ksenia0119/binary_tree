@@ -45,11 +45,11 @@ void DeleteTree(TreeNode<T>* root){
 
 
 }
-//освобождение динамической пам€ти занимаемой одним узлом
-template<class T>
-void DeleteTreeNode(TreeNode<T>* node){
-    delete node;
-}
+////освобождение динамической пам€ти занимаемой одним узлом
+//template<class T>
+//void DeleteTreeNode(TreeNode<T>* node){
+//    delete node;
+//}
 
 //печать одного узла
 template <class T>
@@ -96,7 +96,7 @@ int Depth(TreeNode<T>* t) {
     {
         depthLeft = Depth(t->Left());
         depthRight = Depth(t->Right());
-        //тернарный оператор
+        //тернарный оператор(условие? true:false)
         //выбирает максимальное между depthLeft и depthRight
         depthValue = 1 + (depthLeft > depthRight ? depthLeft : depthRight);
     }
@@ -106,6 +106,7 @@ int Depth(TreeNode<T>* t) {
 //обратное рекурсивное прохождение узлов дерева(снизу вверх)
 template <class T>
 void Postorder(TreeNode<T>* root) {
+   
     //рекурсивное прохождение завершаетс€ на пустом поддереве
     if (root == nullptr)
         return;
@@ -127,6 +128,7 @@ void Inorder(const TreeNode<T>* node) {
 //прохождение дерева в пр€мом пор€дке(сверху вниз)
 template <class T>
 void Preorder(TreeNode<T>* node) {
+  
     if (node != nullptr) {
         PrintNode(node);//посетить узел
         Preorder(node->Left());//спуститьс€ по левому поддереву
@@ -146,7 +148,7 @@ void Preorder(TreeNode<T>* node) {
 //    }
 //}
 
-//прромежуток между уровн€ми
+//промежуток между уровн€ми
 const int indentBlock = 6;
 //вставить numпробелов в текущей строке
 void IndentBlanks(int num) {
@@ -195,5 +197,59 @@ TreeNode<T>* GetTreeNode(T item, TreeNode<T>* lptr = nullptr,
     // вернуть указатель на выделенную системой пам€ть
     return p;
 }
+
+//добавление новых узлов
+template <class T>
+TreeNode<T>* Add(TreeNode<T>* node, const T& item)
+
+{
+
+    //≈сли ветки не существует
+
+    if (node == nullptr)
+
+    { //создадим ее и зададим в нее данные
+
+        return new TreeNode<int>(item, nullptr, nullptr);
+
+    }
+
+   
+    if (item < node->data) {
+        // –екурсивно вставл€ем значение в левое поддерево
+        node->left = Add(node->left, item);
+    }
+    else if (item > node->data) {
+        // –екурсивно вставл€ем значение в правое поддерево
+        node->right = Add(node->right, item);
+    }
+
+    // ≈сли значение уже присутствует в дереве, ничего не делаем
+
+    return node;
+}
+
+//поиск узла по значению
+template<class T>
+bool Search(TreeNode<T>* node, const T& data) {
+    if (node == nullptr) {
+        // ƒерево пустое или достигнут конец ветки (лист без значени€)
+        return false;
+    }
+
+    if (data == node->data) {
+        // «начение найдено в текущем узле
+        return true;
+    }
+    else if (data < node->data) {
+        // –екурсивно ищем значение в левом поддереве
+        return Search(node->left, data);
+    }
+    else {
+        // –екурсивно ищем значение в правом поддереве
+        return Search(node->right, data);
+    }
+}
+
 
 
