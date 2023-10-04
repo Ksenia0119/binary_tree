@@ -3,7 +3,7 @@
 //@author Maltseva K.V.
 
 #include <cassert>
-
+#include <queue>
 using namespace std;
 
 // объявление объекта для узла бинарного дерева
@@ -14,7 +14,7 @@ struct TreeNode
     // указатели левого и правого дочерних узлов
     TreeNode<T>* left;
     TreeNode<T>* right;
-    TreeNode<T>* parent;
+  
 
     // открытый элемент, допускающий обновление
     T data;
@@ -54,7 +54,7 @@ void DeleteTreeNode(TreeNode<T>* node){
 
 //печать одного узла
 template <class T>
-void PrintNode(const TreeNode<T>* node){
+void PrintNode( TreeNode<T>* node){
     if (node == nullptr)
     {
         cout << "Узел пуст" << endl;
@@ -125,41 +125,50 @@ int Depth(TreeNode<T>* t) {
     }
     return depthValue;
 }
+//увеличение данных узла на 10
+template <class T>
+void Inc(TreeNode<T>* node) {
+    node->data += 10;
+}
 
+//возведение данных узла в квадрат
+template <class T>
+void Square(TreeNode<T>* node) {
+    node->data = node->data*node->data; 
+}
 //обратное рекурсивное прохождение узлов дерева(снизу вверх) LRN
 template <class T>
-void Postorder_print(TreeNode<T>* root) {
+void Postorder_print(TreeNode<T>* root,void(*func)(TreeNode<T>*)) {
    
     //рекурсивное прохождение завершается на пустом поддереве
     if (root == nullptr)
         return;
-    Postorder_print(root->Left());//спуститься по левому поддереву
-    Postorder_print(root->Right());//спуститься по правому поддереву
-    PrintNode(root);
+    Postorder_print(root->Left(),func);//спуститься по левому поддереву
+    Postorder_print(root->Right(),func);//спуститься по правому поддереву
+    func(root);
 
 }
+
 //симметричное прохождение узлов дерева(слева направо)
 template <class T>
-void Inorder_print(const TreeNode<T>* node) {
+void Inorder_print(TreeNode<T>* node, void(*func)(TreeNode<T>*)) {
     //рекурсивное прохождение завершается на пустом поддереве
     if (node != nullptr) {
-        Inorder_print(node->Left());//спуститься по левому поддереву
-        PrintNode(node);//посетить узел
-        Inorder_print(node->Right());//спуститься по правому поддереву
+        Inorder_print(node->Left(),func);//спуститься по левому поддереву
+        func(node);//посетить узел
+        Inorder_print(node->Right(),func);//спуститься по правому поддереву
     }
 }
 //прохождение дерева в прямом порядке(сверху вниз)
 template <class T>
-void Preorder_print(TreeNode<T>* node) {
+void Preorder_print(TreeNode<T>* node, void(*func)(TreeNode<T>*)) {
   
     if (node != nullptr) {
-        PrintNode(node);//посетить узел
-        Preorder_print(node->Left());//спуститься по левому поддереву
-        Preorder_print(node->Right());//спуститься по правому поддереву
+        func(node);//посетить узел
+        Preorder_print(node->Left(),func);//спуститься по левому поддереву
+        Preorder_print(node->Right(),func);//спуститься по правому поддереву
     }
 }
-
-
 
 
 
@@ -189,7 +198,7 @@ void PrintTree(TreeNode<T>* node, int level) {
 
 
 
-//добавление новых узлов
+//добавление новых узлов в дерево поиска
 template <class T>
 TreeNode<T>* AddNode(TreeNode<T>* node, const T& item)
 
@@ -235,7 +244,7 @@ int PrintArr(TreeNode<T>* t, T arr[], int i) {
     }
     return i;
 }
-//построение бинарного дерева из массива
+//построение бинарного дерева из массива, элементы в котором хранятся след.образом( корень,левый и правый потомки,потомки левого,потомки правого и т.д)
 template<class T>
 void BinaryTreeFromVector(vector<T> vec) {
     // Создание корневого узла с первым элементом вектора
@@ -246,7 +255,7 @@ void BinaryTreeFromVector(vector<T> vec) {
         if (left < vec.size())
         AddNode(root, vec.at(i));
         if (right < vec.size())
-            AddNode(root, vec.at(i));
+        AddNode(root, vec.at(i));
        
     }
     PrintTree(root, 0);
@@ -341,7 +350,7 @@ TreeNode<T>* Remove(TreeNode<T>* root, const T& data) {
         else {
             // Узел имеет оба потомка
 
-            TreeNode<T>* parent = Succ(root->right);
+            TreeNode<T>* parent = SuccMin(root->right);
             root->data = parent->data;
             root->right = Remove(root->right, parent->data);
         }
@@ -349,9 +358,9 @@ TreeNode<T>* Remove(TreeNode<T>* root, const T& data) {
 
     return root;
 }
-//поиск следующего 
+//поиск следующего наименьшего
 template<class T>
-TreeNode<T>* Succ(TreeNode<T>* root) {
+TreeNode<T>* SuccMin(TreeNode<T>* root) {
     if (root == nullptr) {
         return nullptr;
     }
@@ -361,281 +370,53 @@ TreeNode<T>* Succ(TreeNode<T>* root) {
     }
     return root;
 }
-//тестирование функции удаления узла 
-void TestRemove()
-{
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root = new TreeNode<int>(35, nullptr, nullptr);
-    AddNode(root, 25);
-    AddNode(root, 7);
-    AddNode(root, 16);
-    AddNode(root, 15);
-    AddNode(root, 3);
-    AddNode(root, 26);
-    AddNode(root, 38);
-    AddNode(root, 40);
-    AddNode(root, 39);
-    AddNode(root, 55);
-    cout << endl;
-    PrintTree(root, 1);
-
-    Remove(root, 38);
-    TreeNode<int>* node38 = root->right;
-    assert(node38 != nullptr);
-    assert(node38->data == 40);
-    cout << endl;
-    PrintTree(root, 1);
-    cout << endl;
-    cout << endl;
-
-    Remove(root, 7);
-    TreeNode<int>* node7 = root->left->left;
-    assert(node7 != nullptr);
-    assert(node7->data ==15);
-    cout << endl;
-    PrintTree(root, 1);
-    cout << endl;
-    cout << endl;
-
-
-    Remove(root, 15);
-    TreeNode<int>* node15 = root->left->left;
-    assert(node15 != nullptr);
-    assert(node15->data == 16);
-    cout << endl;
-    PrintTree(root, 1);
-    cout << endl;
-    cout << endl;
-
-
-    Remove(root,3 );
-    TreeNode<int>* node3 = root->left->left->left;
-    assert(node3 == nullptr);
-    cout << endl;
-    PrintTree(root, 1);
-    cout << endl;
-    cout << endl;
-
-    Remove(root, 40);
-    TreeNode<int>* node40 = root->right;
-    assert(node40 != nullptr);
-    assert(node40->data == 55);
-    cout << endl;
-    PrintTree(root, 1);
-    cout << endl;
-    cout << endl;
-
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root);
+//копирование дерева
+template <class T>
+TreeNode<T>* CopyTree(TreeNode<T>* node) {
+    //создаем указатели на новые узлы
+    TreeNode<T>* newlptr, * newrptr, *newnode;
+    //Если node равен nullptr, то это базовый случай рекурсии
+    if (node == nullptr)
+        return nullptr;
+    //Если у узла node есть левый потомок (node->left), 
+    // вызывается рекурсивный вызов функции CopyTree для копирования левого поддерева. Результат сохраняется в newlptr.
+    if (node->left != nullptr)
+        newlptr = CopyTree(node->left);
+    else
+        newlptr = nullptr;
+    //Если у узла node есть правый потомок(node->right), 
+    // вызывается рекурсивный вызов функции CopyTree для копирования правого поддерева.Результат сохраняется в newrptr.
+    if (node->right != nullptr)
+        newrptr = CopyTree(node->right);
+    else newrptr = nullptr;
+   // Создается новый узел newnode с данными node->data и указателями 
+   // на скопированные левое и правое поддеревья(newlptr и newrptr соответственно).
+   //Новый узел newnode становится корневым узлом скопированного поддерева.
+    newnode = new TreeNode<int>(node->data, newlptr, newrptr);
+    return newnode;
 }
-//тестирование функции поиска
-void TestSearch() {
-    // Создаем простое бинарное дерево для тестирования
-   
-    TreeNode<int>* root = new TreeNode<int>(5, nullptr, nullptr);
-    AddNode(root, 3);
-    AddNode(root, 7);
-    AddNode(root, 2);
-    AddNode(root, 4);
-    AddNode(root, 6);
-    AddNode(root, 8);
-    PrintTree(root, 1);
-    
-    assert(Search(root, 5) == 0); // Значение 5 находится на уровне 0
-    assert(Search(root, 3) == 1); // Значение 3 находится на уровне 1
-    assert(Search(root, 7) == 1); // Значение 7 находится на уровне 1
-    assert(Search(root, 2) == 2); // Значение 2 находится на уровне 2
-    assert(Search(root, 4) == 2); // Значение 4 находится на уровне 2
-    assert(Search(root, 6) == 2); // Значение 6 находится на уровне 2
-    assert(Search(root, 8) == 2); // Значение 8 находится на уровне 2
-
-    // Тестируем поиск на отсутствующих значениях
-    assert(Search(root, 1) == -1); // Значение 1 отсутствует в дереве
-    assert(Search(root, 9) == -1); // Значение 9 отсутствует в дереве
-
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root);
-    cout << "Поиск пройден" << endl;
-}
-//тестирование функции добавления
-void TestAddNode() {
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root = new TreeNode<int>(40, nullptr, nullptr);
-    AddNode(root, 25);
-    AddNode(root, 70);
-    AddNode(root, 30);
-    AddNode(root, 45);
-    AddNode(root, 43);
-
-    //PrintTree(root, 1);
-    
-    
-    // Уровень 0
-    assert(root->data == 40);
-
-    // Уровень 1
-    assert(root->left->data == 25);
-    assert(root->right->data == 70);
-
-    // Уровень 2
-    assert(root->left->left==nullptr);
-    assert(root->left->right->data== 30);
-    assert(root->right->right == nullptr);
-    assert(root->right->left->data == 45);
-
-    // Уровень 3
-    assert(root->right->left->left->data == 43);
-
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root);
-
-    cout << "Добавление пройдено" << endl;
-}
-//тестирование функции глубины
-void TestDepth() {
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root = new TreeNode<int>(35, nullptr, nullptr);
-    AddNode(root, 25);
-    AddNode(root, 7);
-    AddNode(root, 16);
-    AddNode(root, 15);
-    AddNode(root, 3);
-    AddNode(root, 26);
-    AddNode(root, 38);
-    AddNode(root, 40);
-    AddNode(root, 39);
-    AddNode(root, 55);
-    // Проверяем глубину дерева
-    assert(Depth(root) == 4);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root);
-
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root1 = new TreeNode<int>(15, nullptr, nullptr);
-    // Проверяем глубину дерева
-    assert(Depth(root1) == 0);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root1);
-
-
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root2 = new TreeNode<int>(40, nullptr, nullptr);
-    AddNode(root2, 25);
-    AddNode(root2, 70);
-    AddNode(root2, 30);
-    AddNode(root2, 45);
-    AddNode(root2, 43);
-    // Проверяем глубину дерева
-    assert(Depth(root2) == 3);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root2);
-    cout << "Подсчет глубины пройден" << endl;
-}
-//тестирование функции подсчета узлов
-void TestCountNodes() {
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root = new TreeNode<int>(35, nullptr, nullptr);
-    AddNode(root, 25);
-    AddNode(root, 7);
-    AddNode(root, 16);
-    AddNode(root, 15);
-    AddNode(root, 3);
-    AddNode(root, 26);
-    AddNode(root, 38);
-    AddNode(root, 40);
-    AddNode(root, 39);
-    AddNode(root, 55);
-    // Проверяем количество узлов в дереве
-    assert(CountNodes(root) == 11);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root);
-
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root1 = new TreeNode<int>(15, nullptr, nullptr);
-    // Проверяем количество узлов в дереве
-    assert(CountNodes(root1) == 1);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root1);
-
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root2 = new TreeNode<int>(40, nullptr, nullptr);
-    AddNode(root2, 25);
-    AddNode(root2, 70);
-    AddNode(root2, 30);
-    AddNode(root2, 45);
-    AddNode(root2, 43);
-    // Проверяем количество узлов в дереве
-    assert(CountNodes(root2) == 6);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root2);
-
-    cout << "Подсчет узлов пройден" << endl;
+//проход дерева в ширину с использованием очереди
+template <class T>
+void BFS(TreeNode<T>* root,void(* func)(TreeNode<T>*)) {
+    if (root == nullptr)
+        return;
+    //создаем пустую очередь
+    queue <TreeNode<T>*> q;
+    //помещаем в очередь корневой узел
+    q.push(root);
+    // цикл до тех пор, пока queue не станет пустой
+    while (!q.empty()) {
+        //создаем указатель на начало очереди
+        TreeNode<T>* current = q.front();
+        //извлекаем первый элемент
+        q.pop();
+        // Обработка текущего узла
+        func(current);
+        //Добавление левого и правого потомка текущего узла в очередь
+        if (current->left != nullptr)
+                q.push(current->left);
+        if (current->right != nullptr)
+            q.push(current->right);
+    }
 }
 
-//void TestDeleteTree() {
-//    // Создаем бинарное дерево для тестирования
-//    TreeNode<int>* root = new TreeNode<int>(35, nullptr, nullptr);
-//    AddNode(root, 25);
-//    AddNode(root, 7);
-//    AddNode(root, 16);
-//    AddNode(root, 15);
-//    AddNode(root, 3);
-//    AddNode(root, 26);
-//    AddNode(root, 38);
-//    AddNode(root, 40);
-//    AddNode(root, 39);
-//    AddNode(root, 55);
-//    // Удаляем дерево
-//    DeleteTree(root);
-//    // Проверяем, что корень и все узлы дерева удалены (равны nullptr)
-//    //assert(left);
-//    assert((left == nullptr && right == nullptr));
-//    /*assert(root->right == nullptr);
-//    assert(root->left->left == nullptr);
-//    assert(root->left->right == nullptr);
-//    assert(root->right->left == nullptr);
-//    assert(root->right->right->right == nullptr);
-//    assert(root->right->right->left == nullptr);
-//    assert(root->left->left->left == nullptr);
-//    assert(root->left->left->right == nullptr);*/
-//    cout << "Удаление дерево пройдено" << endl;
-//}
-//тестирование функции подсчета листьев
-void TestCountLeaf() {
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root = new TreeNode<int>(35, nullptr, nullptr);
-    AddNode(root, 25);
-    AddNode(root, 7);
-    AddNode(root, 16);
-    AddNode(root, 15);
-    AddNode(root, 3);
-    AddNode(root, 26);
-    AddNode(root, 38);
-    AddNode(root, 40);
-    AddNode(root, 39);
-    AddNode(root, 55);
-    int count = 0;
-    CountLeaf(root, count);
-    // Проверяем, что количество листьев равно ожидаемому значению
-    assert(count == 5);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root);
-
-
-   
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root2 = new TreeNode<int>(40, nullptr, nullptr);
-    AddNode(root2, 25);
-    AddNode(root2, 70);
-    AddNode(root2, 30);
-    AddNode(root2, 45);
-    AddNode(root2, 43);
-   
-    int count2 = 0;
-    CountLeaf(root2, count2);
-    // Проверяем, что количество листьев равно ожидаемому значению
-    assert(count == 5);
-    // Освобождаем память, удаляя дерево
-    DeleteTree(root2);
-    cout << "Подсчет листьев пройден" << endl;
-}

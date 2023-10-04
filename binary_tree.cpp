@@ -3,8 +3,9 @@
 #include <iostream>
 #include <vector>
 #include "tree_node.h"
-
-
+#include"TestsTreeNode.h"
+#include"BinSearchTree.h"
+#include"TestsBST.h"
 
 int main()
 {
@@ -51,16 +52,40 @@ int main()
     AddNode(root, 40);
     AddNode(root, 39);
     AddNode(root, 55);
+
+    //Копирование дерева
+    TreeNode<int>* copiedRoot = CopyTree(root);
+   // DeleteTree(root);
+   // PrintTree(root, 1);
+    
+    //cout << "Копия дерева" << endl;
+   // PrintTree(copiedRoot, 1);
+   // DeleteTree(copiedRoot);
+
     cout << "Обратный проход" << endl;
-    Postorder_print(root);
-   
+    Postorder_print(copiedRoot,&Inc);
+    Postorder_print(copiedRoot, &PrintNode);
+    cout << endl;
+
+    Postorder_print(root, &PrintNode);
     cout << endl;
     cout << "Симметричный проход" << endl;
-    Inorder_print(root);
+    Inorder_print(copiedRoot, &Inc);
+    Inorder_print(copiedRoot, &PrintNode);
     cout << endl;
     cout << "Прямой проход" << endl;
-    Preorder_print(root);
+    Preorder_print(copiedRoot, &Inc);
+    Preorder_print(copiedRoot, &PrintNode);
+
     cout << endl;
+    cout << "Обход в ширину(по уровням)" << endl;
+    BFS(copiedRoot, &PrintNode);
+    BFS(copiedRoot, &Square);
+    cout << endl;
+    BFS(copiedRoot, &PrintNode);
+    cout << endl;
+
+
     CountLeaf(root, leafCount);
     PrintTree(root,0);
     cout << "Число листьев в дереве = " << leafCount << endl;
@@ -88,11 +113,42 @@ int main()
     //BinaryTreeFromVector(vec);
     //PrintTree(root, 0);
     //TestRemove();
-    TestSearch();
-    TestAddNode();
-    TestDepth();
-    TestCountNodes();
-    TestCountLeaf();
+    //TestSearch();
+    //TestAddNode();
+    //TestDepth();
+    //TestCountNodes();
+    //TestCountLeaf();
+    //TestCopyTree();
+
+
+    //// Создаем объект класса BinSearchTree
+    //BinSearchTree<int> bst;
+
+    //// Вставляем элементы в дерево
+    //bst.Insret(5);
+    //bst.Insret(3);
+    //bst.Insret(7);
+    //bst.Insret(2);
+    //bst.Insret(4);
+    //bst.Insret(6);
+    //bst.Insret(8);
+
+    //// Поиск элемента в дереве
+    //int level=bst.Find(4);
+    //if (level != -1) {
+    //    cout << "Узел найден на уровне: " << level << endl;
+    //}
+    //else {
+    //    cout << "Узел не найден" << endl;
+    //}
+    //cout<<bst.ListSize()<<endl;
+    //// Удаление элемента из дерева
+    //bst.Delete(7);
+
+    TestCopyConstructor<int>();
+    TestCopyOperator<int>();
+    TestMoveConstructor<int>();
+    TestMoveOperator<int>();
     delete arr;
 
     /*bool found = Search(root, 55);
@@ -102,5 +158,13 @@ int main()
    else {
        cout << "Значение не найдено в дереве" << endl;
    }*/
+    //Insert(20, root, 1);
+    //Insert(60, root, 0);
+   //PrintTree(root, 0);
+   
+   
+
+
+
     return 0;
 }

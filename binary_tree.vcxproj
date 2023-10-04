@@ -130,6 +130,10 @@
     <ClCompile Include="binary_tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinSearchTree.h" />
+    <ClInclude Include="Header.h" />
+    <ClInclude Include="TestsBST.h" />
+    <ClInclude Include="TestsTreeNode.h" />
     <ClInclude Include="tree_node.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
