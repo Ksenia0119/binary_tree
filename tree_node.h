@@ -4,6 +4,8 @@
 
 #include <cassert>
 #include <queue>
+#include<functional>
+#include<stack>
 using namespace std;
 
 // объявление объекта для узла бинарного дерева
@@ -28,6 +30,12 @@ struct TreeNode
         left = lptr;
         right = rptr;
     }
+    TreeNode() {
+       data = NULL;
+        left = nullptr;
+        right = nullptr;
+    }
+
     // методы доступа к полям указателей
     TreeNode<T>* Left() const { return left; }
     TreeNode<T>* Right() const { return right; }
@@ -246,7 +254,7 @@ int PrintArr(TreeNode<T>* t, T arr[], int i) {
 }
 //построение бинарного дерева из массива, элементы в котором хранятся след.образом( корень,левый и правый потомки,потомки левого,потомки правого и т.д)
 template<class T>
-void BinaryTreeFromVector(vector<T> vec) {
+TreeNode<T>* BinaryTreeFromVector(vector<T> vec) {
     // Создание корневого узла с первым элементом вектора
     TreeNode<int>* root = new TreeNode<int>(vec.at(0), nullptr, nullptr);
     for (int i = 0; i < vec.size(); i++) {
@@ -258,6 +266,8 @@ void BinaryTreeFromVector(vector<T> vec) {
         AddNode(root, vec.at(i));
        
     }
+    //возвращаем корень
+    return root;
     PrintTree(root, 0);
 }
 
@@ -420,3 +430,27 @@ void BFS(TreeNode<T>* root,void(* func)(TreeNode<T>*)) {
     }
 }
 
+//проход дерева в ширину с использованием очереди
+template <class T>
+void BFS(TreeNode<T>* root,std::function<void(TreeNode<T>&)> f) {
+    if (root == nullptr)
+        return;
+    //создаем пустую очередь
+    queue <TreeNode<T>*> q;
+    //помещаем в очередь корневой узел
+    q.push(root);
+    // цикл до тех пор, пока queue не станет пустой
+    while (!q.empty()) {
+        //создаем указатель на начало очереди
+        TreeNode<T>* current = q.front();
+        //извлекаем первый элемент
+        q.pop();
+        // Обработка текущего узла
+        f(*current);
+        //Добавление левого и правого потомка текущего узла в очередь
+        if (current->left != nullptr)
+            q.push(current->left);
+        if (current->right != nullptr)
+            q.push(current->right);
+    }
+}

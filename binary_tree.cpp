@@ -81,8 +81,14 @@ int main()
     cout << "Обход в ширину(по уровням)" << endl;
     BFS(copiedRoot, &PrintNode);
     BFS(copiedRoot, &Square);
-    cout << endl;
+    cout << "Обход в ширину(по уровням)1." << endl;
     BFS(copiedRoot, &PrintNode);
+    cout << endl;
+    BFS<int>(copiedRoot, [](TreeNode<int>& n) {cout << n.data << " "; });
+    cout << "Обход в ширину(по уровням)2." << endl;
+    BFS<int>(copiedRoot, [](TreeNode<int>& n) {n.data = n.data %10 ; });
+    BFS(copiedRoot, &PrintNode);
+
     cout << endl;
 
 
@@ -113,26 +119,57 @@ int main()
     //BinaryTreeFromVector(vec);
     //PrintTree(root, 0);
     //TestRemove();
-    //TestSearch();
-    //TestAddNode();
+   // TestSearch();
+   // TestAddNode();
     //TestDepth();
     //TestCountNodes();
     //TestCountLeaf();
-    //TestCopyTree();
+   // TestCopyTree();
 
 
-    //// Создаем объект класса BinSearchTree
-    //BinSearchTree<int> bst;
+    // Создаем объект класса BinSearchTree
+    BinSearchTree<int> bst;
 
-    //// Вставляем элементы в дерево
-    //bst.Insret(5);
-    //bst.Insret(3);
-    //bst.Insret(7);
-    //bst.Insret(2);
-    //bst.Insret(4);
-    //bst.Insret(6);
-    //bst.Insret(8);
-
+    // Вставляем элементы в дерево
+  /*  bst.Insert(5);
+    bst.Insert(3);
+    bst.Insert(7);
+    bst.Insert(2);
+    bst.Insert(4);
+    bst.Insert(6);
+    bst.Insert(8);
+   */
+    bst.Insert(35);
+    bst.Insert(25);
+    bst.Insert(7);
+    bst.Insert(16);
+    bst.Insert(15);
+    bst.Insert(3);
+    bst.Insert(26);
+    bst.Insert(38);
+    bst.Insert(40);
+    bst.Insert(39);
+    bst.Insert(55);
+   /* TreeNode<int>* root = new TreeNode<int>(35, nullptr, nullptr);
+    AddNode(root, 25);
+    AddNode(root, 7);
+    AddNode(root, 16);
+    AddNode(root, 15);
+    AddNode(root, 3);
+    AddNode(root, 26);
+    AddNode(root, 38);
+    AddNode(root, 40);
+    AddNode(root, 39);
+    AddNode(root, 55);*/
+   // TestInsert<int>();
+   // TestRemove<int>();
+   // TestFind<int>();
+    // Создаем итератор и проходим через все узлы дерева
+    //BinSearchTreeIterator<int> iter(root);
+    //прохождение по элементам коллекции с выводом данных
+ /*   for (auto it = bst.begin(); it != bst.end(); ++it) {
+        cout << *it << " ";
+    }*/
     //// Поиск элемента в дереве
     //int level=bst.Find(4);
     //if (level != -1) {
@@ -145,10 +182,22 @@ int main()
     //// Удаление элемента из дерева
     //bst.Delete(7);
 
-    TestCopyConstructor<int>();
-    TestCopyOperator<int>();
-    TestMoveConstructor<int>();
-    TestMoveOperator<int>();
+    //TestCopyConstructor<int>();
+    //TestCopyOperator<int>();
+    //TestMoveConstructor<int>();
+    //TestMoveOperator<int>();//прохождение по элементам коллекции с выводом данных
+
+    for (auto it = bst.begin(); it != bst.end(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+    TestBSTIterator();
+    TestBSTDataOperator();
+    TestIncOperator();
+    TestOperatorEqual();
+    TestOperatorUnequal();
+
+
     delete arr;
 
     /*bool found = Search(root, 55);

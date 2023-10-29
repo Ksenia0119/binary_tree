@@ -1,8 +1,10 @@
 #pragma once
 
 //@author Maltseva K.V.
+     #include<stack>
     #include "tree_node.h"
-
+    #include"AbstractIterator.h"
+    #include<stack>
     using namespace std;
 
 
@@ -16,7 +18,8 @@
         TreeNode<T>* curr;
         //количество элементов дерева
         int size;
-
+     
+        
        public:
         //  онструктор по умолчанию
         BinSearchTree() : root(nullptr), curr(nullptr), size(0) {}
@@ -57,6 +60,18 @@
             }
             return *this; // возвращаем текущий объект
         }
+
+        //BinSearchTree foo() {
+        //    BinSearchTree b;
+
+        //    return b;
+        //}
+
+
+        //void bar() {
+        //    BinSearchTree b2 = foo();
+        //}
+
         //  онструктор перемещени€
         BinSearchTree(BinSearchTree&& other)
         {
@@ -97,26 +112,131 @@
 
         TreeNode<T>* Curr() const { return curr; };
         int Find(const T& item);
-        void Insret(const T& item);
+        void Insert(const T& item);
         void Delete(const T& item);
         void Clear(TreeNode<T>* node);
         bool ListEmpty()const;
         int ListSize()const;
 
+        //класс итератора бинарного дерева поиска LNR обхода
+        template<class T>
+        class BinSearchTreeIterator :public Iterator<T> {
+        private:
+            TreeNode<T>* curr;  // ”казатель на текущий узел
+            //стек узлов дл€ обхода в глубину 
+            stack<TreeNode<T>*> stack;
+
+            //помещение узлов дерева в стек
+            void pushNodesintoStack(TreeNode<T>* node) {
+                //пока узел не равен nullptr
+                while (node != nullptr)
+                {
+                    //помещаем узлы в стек
+                    stack.push(node);
+                    //переходим к левому поддереву
+                    node = node->left;
+                }
+            }
+        public:
+            // онструктор
+            //BinSearchTreeIterator(TreeNode<T>* node) : curr(node) {}
+
+            BinSearchTreeIterator(TreeNode<T>* root) {
+                pushNodesintoStack(root);
+                if (!stack.empty()) {
+                    curr = stack.top();
+                    stack.pop();
+                }
+                else 
+                    curr = nullptr;
+                
+            } 
+            
+            // ќператор разыменовани€-доступа к данным
+            T& operator*() const override {
+                //возвращает данные текущего узла
+                return curr->data;
+            }
+            //ќператор инкремента дл€ BST
+            BinSearchTreeIterator& operator++() override {
+                //если текущий не равен nullptr
+                if (curr->right != nullptr) {
+                    //помещаем в стек правое поддерево
+                    pushNodesintoStack(curr->right);
+                }
+                //если стек пустой
+                if (!stack.empty()) {
+                    //текущий-вершина стека
+                    curr = stack.top();
+                    //вытащить элемент
+                    stack.pop();
+
+                }
+                //иначе текущии = nullptr
+                else {
+                    curr = nullptr;
+                }
+                //if (nodeStack.empty() && curr == nullptr) {
+                //    // ≈сли стек пуст и текущий указатель равен nullptr, значит достигнут конец дерева
+                //    return *this;
+                //}
+
+                //if (curr != nullptr) {
+                //    // ≈сли текущий указатель не равен nullptr, переходим к правому поддереву
+                //    while (curr != nullptr) {
+                //        nodeStack.push(curr);
+                //        curr = curr->right;  // »зменили на правый потомок дл€ обратного симметричного пор€дка
+                //    }
+                //}
+                //else {
+                //    // ≈сли текущий указатель равен nullptr, извлекаем узел из стека
+                //    curr = nodeStack.top();
+                //    nodeStack.pop();
+                //}
+
+                return *this;
+            }
+            // ќператор равенства
+            bool operator==(const Iterator<T>& other) const override {
+                const BinSearchTreeIterator* otherIterator = dynamic_cast<const BinSearchTreeIterator*>(&other);
+                return otherIterator && curr == otherIterator->curr;
+            }
+            // ќператор неравенства
+            bool operator!=(const Iterator<T>& other) const override {
+                return !(*this == other);
+            }
+            
+
+
+        };
+        // »тератор начала списка
+        BinSearchTreeIterator<T> begin() const {
+            //возвращает итератор ,который указывает на головной узел списка
+            return BinSearchTreeIterator<T>(root);
+        }
+        // »тератор начала списка
+        BinSearchTreeIterator<T> end() const {
+            //возвращает итератор ,который указывает на позицию после последнего узла списка
+            return BinSearchTreeIterator<T>(nullptr);
+        }
     };
     //проверка на пустое дерево
     template<class T>
     bool BinSearchTree<T>::ListEmpty() const {
         return (root == nullptr);
     }
+
     //очистка дерева
     template<class T>
-    void BinSearchTree<T>::Clear(TreeNode<T>* node) {
-        if (node) {
-            Clear(node->left);
-            Clear(node->right);
-            delete node;
-        }
+    void BinSearchTree<T>::Clear(TreeNode<T>* node) {  //
+        if (root == nullptr)
+            return;
+
+        DeleteTree(root->Left());
+        DeleteTree(root->Right());
+
+        delete root;
+        
     }
     // ѕоиск узла по значению и вывод его уровн€
     template<class T>
@@ -126,9 +246,11 @@
 
     // ¬ставка нового элемента
     template<class T>
-    void BinSearchTree<T>::Insret(const T& item) {
+    void BinSearchTree<T>::Insert(const T& item) {
         root = AddNode(root, item);
         size++;
+        //nodeStack.push(item);
+        
     }
 
     // ”даление узла по значению

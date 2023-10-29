@@ -130,6 +130,8 @@
     <ClCompile Include="binary_tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Linked_list\LinkedList\AbstractIterator.h" />
+    <ClInclude Include="AbstractIterator.h" />
     <ClInclude Include="BinSearchTree.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="TestsBST.h" />

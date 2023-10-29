@@ -29,6 +29,23 @@ TreeNode<T>* CreateTree() {
     return root;
 }
 
+//Функция для создания вырожденного дерева с конкретными значениями в данных узлов
+template <class T>
+TreeNode<T>* CreateTreeRight() {
+    TreeNode<int>* root = new TreeNode<int>(4, nullptr, nullptr);
+    AddNode(root, 5);
+    AddNode(root, 6);
+    AddNode(root, 8);
+    AddNode(root, 21);
+    AddNode(root, 48);
+    AddNode(root, 86);
+    AddNode(root, 101);
+
+    return root;
+}
+
+
+
 //тестирование функции копирования дерева
 void TestCopyTree()
 {
@@ -55,6 +72,8 @@ void TestCopyTree()
     assert(root1 == nullptr);
     assert(copiedRoot1 != nullptr);
     assert(copiedRoot1->data = 15);
+
+   
 
     cout << "Копирование дерева пройдено" << endl;
 }
@@ -114,6 +133,24 @@ void TestRemove()
 
     // Освобождаем память, удаляя дерево
     DeleteTree(root);
+
+    // Создаем вырожденное бинарное дерево для тестирования
+    TreeNode<int>* root1 = CreateTreeRight<int>();
+    PrintTree(root1, 1);
+    Remove(root1, 6);
+    TreeNode<int>* node6 = root1->right->right;
+    assert(node6 != nullptr);
+    assert(node6->data == 8);
+    PrintTree(root1, 1);
+    cout << endl;
+    Remove(root1, 21);
+    TreeNode<int>* node21 = root1->right->right->right;
+    assert(node21 != nullptr);
+    assert(node21->data == 48);
+    PrintTree(root1, 1);
+
+    // Освобождаем память, удаляя дерево
+    DeleteTree(root1);
     cout << "Удаление пройдено" << endl;
 }
 //тестирование функции поиска
@@ -140,6 +177,28 @@ void TestSearch() {
 
     // Освобождаем память, удаляя дерево
     DeleteTree(root);
+
+
+    // Создаем вырожденное бинарное дерево для тестирования
+    TreeNode<int>* root1 = CreateTreeRight<int>();
+    PrintTree(root1, 1);
+
+    assert(Search(root1, 4) == 0); // Значение 4 находится на уровне 0
+    assert(Search(root1, 5) == 1); // Значение 5 находится на уровне 1
+    assert(Search(root1, 6) == 2); // Значение 6 находится на уровне 2
+    assert(Search(root1, 8) == 3);  // Значение 8 находится на уровне 3
+    assert(Search(root1, 21) == 4); // Значение 21 находится на уровне 4
+    assert(Search(root1, 48) == 5); // Значение 48 находится на уровне 5
+    assert(Search(root1, 86) == 6); // Значение 86 находится на уровне 6
+    assert(Search(root1, 101) == 7); // Значение 101 находится на уровне 7
+
+    // Освобождаем память, удаляя дерево
+    DeleteTree(root1);
+
+
+    // Создаем бинарное дерево для тестирования
+    TreeNode<int>* root2 = new TreeNode<int>();
+    assert(Search(root2, 4) == -1); // Значение 4 находится на уровне -1
     cout << "Поиск пройден" << endl;
 }
 //тестирование функции добавления
@@ -174,6 +233,22 @@ void TestAddNode() {
     // Освобождаем память, удаляя дерево
     DeleteTree(root);
 
+
+    // Создаем вырожденное бинарное дерево для тестирования
+    TreeNode<int>* root1 = CreateTreeRight<int>();
+    PrintTree(root1, 1);
+    // Уровень 0
+    assert(root1->data == 4);
+    assert(root1->right->data == 5);
+    assert(root1->right->right->data == 6);
+    assert(root1->right->right->right->data == 8);
+    assert(root1->right->right->right->right->data == 21);
+    assert(root1->right->right->right->right->right->data == 48);
+    assert(root1->right->right->right->right->right->right->data == 86);
+    assert(root1->right->right->right->right->right->right->right->data == 101);
+
+    // Освобождаем память, удаляя дерево
+    DeleteTree(root1);
     cout << "Добавление пройдено" << endl;
 }
 //тестирование функции глубины
@@ -194,13 +269,22 @@ void TestDepth() {
     DeleteTree(root1);
 
 
-    // Создаем бинарное дерево для тестирования
-    TreeNode<int>* root2 = new TreeNode<int>(23, nullptr, nullptr);
-    TreеRandom(root, 21, 1, 80);
+  
+    // Создаем вырожденное бинарное дерево для тестирования
+    TreeNode<int>* root2 = CreateTreeRight<int>();
     // Проверяем глубину дерева
-    assert(Depth(root2) == 8);
+    assert(Depth(root2) == 7);
+
     // Освобождаем память, удаляя дерево
     DeleteTree(root2);
+
+    // Создаем бинарное дерево для тестирования
+    TreeNode<int>* root3 = new TreeNode<int>();
+
+    assert(Depth(root3) == 0);
+    // Создаем бинарное дерево для тестирования
+    TreeNode<int>* root4 = new TreeNode<int>(0,nullptr,nullptr);
+    assert(Depth(root4) == 0);
     cout << "Подсчет глубины пройден" << endl;
 }
 //тестирование функции подсчета узлов
@@ -223,12 +307,15 @@ void TestCountNodes() {
 
     // Создаем бинарное дерево для тестирования
     TreeNode<int>* root2 = new TreeNode<int>(40, nullptr, nullptr);
-    TreеRandom(root, 5, 20, 50);
+    TreеRandom(root2, 5, 20, 50);
     // Проверяем количество узлов в дереве
     assert(CountNodes(root2) == 6);
     // Освобождаем память, удаляя дерево
     DeleteTree(root2);
 
+    // Создаем бинарное дерево для тестирования
+    TreeNode<int>* root3 = new TreeNode<int>();
+    assert(CountNodes(root3) == 1);
     cout << "Подсчет узлов пройден" << endl;
 }
 
